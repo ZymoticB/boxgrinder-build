@@ -252,6 +252,14 @@ module BoxGrinder
           devices.disk(:type => 'file', :device => 'disk') do |disk|
             disk.source(:file => "#{@libvirt_image_uri}/#{File.basename(@previous_deliverables.disk)}")
             disk.target(:dev => 'hda', :bus => opts[:bus].to_s)
+			if opts[:domain_type] == "qemu"
+			  case @previous_deliverables.disk.split('.').last
+				when "raw"
+				  disk.driver(:name => "qemu", :type => "raw")
+				when "qcow2"
+				  disk.driver(:name => "qemu", :type => "qcow2")
+			  end
+			end
           end
           devices.interface(:type => 'network') do |interface|
             interface.source(:network => @network)
